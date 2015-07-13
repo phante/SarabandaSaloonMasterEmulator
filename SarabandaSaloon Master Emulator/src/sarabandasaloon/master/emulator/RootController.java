@@ -15,31 +15,90 @@
  */
 package sarabandasaloon.master.emulator;
 
+import com.phante.sarabandasaloon.entity.PushButton;
+import com.phante.sarabandasaloon.entity.PushButtonStatus;
+import com.phante.sarabandasaloon.network.SarabandaController;
+import com.phante.sarabandasaloon.ui.PushButtonSimbol;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 
 /**
  *
  * @author elvisdeltedesco
  */
 public class RootController implements Initializable {
-    
+
     @FXML
-    private Label label;
-    
+    private GridPane panel = new GridPane();
+
     @FXML
-    private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
-    }
-    
+    private Label RXLabel = new Label();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+        double maxSize = 100;
+
+        // Inizializza i simboli per i singoli pulsanti
+        int i = 0;
+        for (PushButton button : SarabandaController.getInstance().getPushButton()) {
+            // Crea il simbolo
+            PushButtonSimbol simbol = new PushButtonSimbol();
+
+            // Lo aggiunge al pannello
+            panel.add(simbol, i++, 0);
+
+            // Imposta le dimensioni
+            simbol.setMaxSize(maxSize, maxSize);
+            simbol.setMinSize(maxSize, maxSize);
+            simbol.setPrefSize(maxSize, maxSize);
+
+            // Aggiunge il listener sullo stato dei pulsanti
+            button.valueProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                Logger.getLogger(RootController.class.getName()).log(Level.INFO, "Un pulsante ha cambiato stato da {0} a {1}.", new Object[]{oldValue, newValue});
+
+                // Al cambio dello stato del pulsante cambio il simbolo come feedback visivo di cosa succede sul palco
+                simbol.setValue(PushButtonStatus.parse(newValue));
+            });
+        }
+        
+        RXLabel.textProperty().bind(SarabandaController.getInstance().messageProperty());
+    }
+
+    private void buttonManagement(int buttonId) {
+        Logger.getLogger(RootController.class.getName()).log(Level.INFO, "Premuto il pulsante {0}", buttonId);
+        PushButton button = SarabandaController.getInstance().getPushButton().get(buttonId - 1);
+        
+        if (button.getStatus() == PushButtonStatus.ENABLED) {
+            // Pressione valida, invio il segnale alla rete
+            button.setStatus(PushButtonStatus.PRESSED);
+            SarabandaController.getInstance().sendPushButtonPressed(buttonId - 1);
+        }
+    }
+
+    @FXML
+    public void pushButton1() {
+        buttonManagement(1);
+    }
+
+    @FXML
+    public void pushButton2() {
+        buttonManagement(2);
+    }
+
+    @FXML
+    public void pushButton3() {
+        buttonManagement(3);
+    }
+
+    @FXML
+    public void pushButton4() {
+        buttonManagement(4);
+    }
 }

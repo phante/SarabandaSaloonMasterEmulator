@@ -15,6 +15,7 @@
  */
 package sarabandasaloon.master.emulator;
 
+import com.phante.sarabandasaloon.network.SarabandaController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -32,6 +33,8 @@ public class SarabandaSaloonMasterEmulator extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("Root.fxml"));
         
         Scene scene = new Scene(root);
+        
+        SarabandaController.getInstance().startServer();
         
         stage.setScene(scene);
         stage.show();
