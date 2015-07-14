@@ -47,10 +47,9 @@ public class UDPServerService extends Service<Void> {
 
     /**
      *
-     * @param udpPort
      */
-    public UDPServerService(int udpPort) {
-        this.serverUdpPort = udpPort;
+    public UDPServerService(int port) {
+        serverUdpPort = port;
         messageRegex = new StringBuilder()
                 .append("^")
                 .append(SarabandaController.MESSAGE_HEADER)

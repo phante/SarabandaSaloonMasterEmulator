@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
@@ -40,6 +41,11 @@ public class RootController implements Initializable {
 
     @FXML
     private Label RXLabel = new Label();
+    
+    @FXML
+    private CheckMenuItem modeSelection = new CheckMenuItem();
+    @FXML
+    private CheckMenuItem networkSelection = new CheckMenuItem();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -68,7 +74,11 @@ public class RootController implements Initializable {
             });
         }
         
-        RXLabel.textProperty().bind(SarabandaController.getInstance().messageProperty());
+        SarabandaController sc = SarabandaController.getInstance();
+        RXLabel.textProperty().bind(sc.messageProperty());
+        
+        modeSelection.selectedProperty().bind(sc.classicModeProperty());
+        networkSelection.selectedProperty().bind(sc.onlyLocalhostModeProperty());
     }
 
     private void buttonManagement(int buttonId) {
@@ -100,5 +110,20 @@ public class RootController implements Initializable {
     @FXML
     public void pushButton4() {
         buttonManagement(4);
+    }
+    
+    @FXML 
+    public void handleQuit() {
+        //Esci??
+    }
+    
+    @FXML
+    public void switchClassicMode() {
+        SarabandaController.getInstance().setClassicMode(!modeSelection.isSelected());
+    }
+    
+    @FXML
+    public void switchNetworkMode() {
+        SarabandaController.getInstance().setLocalhostOnly(!networkSelection.isSelected());
     }
 }
