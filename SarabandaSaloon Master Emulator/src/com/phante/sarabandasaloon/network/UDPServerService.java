@@ -47,9 +47,10 @@ public class UDPServerService extends Service<Void> {
 
     /**
      *
+     * @param udpPort
      */
-    public UDPServerService(int port) {
-        serverUdpPort = port;
+    public UDPServerService(int udpPort) {
+        this.serverUdpPort = udpPort;
         messageRegex = new StringBuilder()
                 .append("^")
                 .append(SarabandaController.MESSAGE_HEADER)
@@ -84,7 +85,7 @@ public class UDPServerService extends Service<Void> {
             @Override
             protected Void call() {
                 try {
-                    Logger.getLogger(UDPServerService.class.getName()).log(Level.INFO, "Avvio il server UDP");
+                    Logger.getLogger(UDPServerService.class.getName()).log(Level.INFO, "Avvio il server UDP in ascolto sulla porta {0}", serverUdpPort);
                     // Apre il socket
                     DatagramSocket socket = new DatagramSocket(serverUdpPort);
                     socket.setBroadcast(true);

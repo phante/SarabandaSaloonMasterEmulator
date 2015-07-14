@@ -17,7 +17,7 @@ package sarabandasaloon.master.emulator;
 
 import com.phante.sarabandasaloon.entity.PushButton;
 import com.phante.sarabandasaloon.entity.PushButtonStatus;
-import com.phante.sarabandasaloon.network.SarabandaController;
+import com.phante.sarabandasaloon.network.SarabandaMasterController;
 import com.phante.sarabandasaloon.ui.PushButtonSimbol;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -53,7 +53,7 @@ public class RootController implements Initializable {
 
         // Inizializza i simboli per i singoli pulsanti
         int i = 0;
-        for (PushButton button : SarabandaController.getInstance().getPushButton()) {
+        for (PushButton button : SarabandaMasterController.getInstance().getPushButton()) {
             // Crea il simbolo
             PushButtonSimbol simbol = new PushButtonSimbol();
 
@@ -74,21 +74,31 @@ public class RootController implements Initializable {
             });
         }
         
-        SarabandaController sc = SarabandaController.getInstance();
+        SarabandaMasterController sc = SarabandaMasterController.getInstance();
         RXLabel.textProperty().bind(sc.messageProperty());
         
         modeSelection.selectedProperty().bind(sc.classicModeProperty());
         networkSelection.selectedProperty().bind(sc.onlyLocalhostModeProperty());
     }
 
+    /**
+     * 
+     * @param buttonId 
+     */
     private void buttonManagement(int buttonId) {
-        Logger.getLogger(RootController.class.getName()).log(Level.INFO, "Premuto il pulsante {0}", buttonId);
-        PushButton button = SarabandaController.getInstance().getPushButton().get(buttonId - 1);
+        PushButton button = SarabandaMasterController.getInstance().getPushButton().get(buttonId - 1);
         
-        if (button.getStatus() == PushButtonStatus.ENABLED) {
+        boolean alreadyPressed = false;
+        for (PushButton pb: SarabandaMasterController.getInstance().getPushButton()) {
+            alreadyPressed = alreadyPressed || (pb.getStatus() == PushButtonStatus.PRESSED);
+        }
+        
+        if (!alreadyPressed && button.getStatus() == PushButtonStatus.ENABLED) {
             // Pressione valida, invio il segnale alla rete
+            Logger.getLogger(RootController.class.getName()).log(Level.INFO, "Premuto il pulsante {0}", buttonId);
+            
             button.setStatus(PushButtonStatus.PRESSED);
-            SarabandaController.getInstance().sendPushButtonPressed(buttonId - 1);
+            SarabandaMasterController.getInstance().sendPushButtonPressed(buttonId - 1);
         }
     }
 
@@ -119,11 +129,11 @@ public class RootController implements Initializable {
     
     @FXML
     public void switchClassicMode() {
-        SarabandaController.getInstance().setClassicMode(!modeSelection.isSelected());
+        SarabandaMasterController.getInstance().setClassicMode(!modeSelection.isSelected());
     }
     
     @FXML
     public void switchNetworkMode() {
-        SarabandaController.getInstance().setLocalhostOnly(!networkSelection.isSelected());
+        SarabandaMasterController.getInstance().setLocalhostOnly(!networkSelection.isSelected());
     }
 }
