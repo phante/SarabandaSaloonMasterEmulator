@@ -98,7 +98,8 @@ public class RootController implements Initializable {
             Logger.getLogger(RootController.class.getName()).log(Level.INFO, "Premuto il pulsante {0}", buttonId);
             
             button.setStatus(PushButtonStatus.PRESSED);
-            SarabandaMasterController.getInstance().sendPushButtonPressed(buttonId - 1);
+            //SarabandaMasterController.getInstance().sendPushButtonPressed(buttonId - 1);
+            SarabandaMasterController.getInstance().sendPushButtonStatus();
         }
     }
 
